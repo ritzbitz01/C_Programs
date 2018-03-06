@@ -9,7 +9,24 @@ int main()
 {
 	pid_t pid = getpid();
 	printf("PID: %d\n", pid);
+	printf("First event from main proc\n");
+	int first_file_desc = open("first_event_file.txt", O_RDWR);
 
+	printf("Second event from main proc\n");
+	FILE *f1 = fopen("first_event_file.txt", "w");
+	if (f1 == NULL)
+  {
+      printf("Error opening file!\n");
+      exit(1);
+  }
+
+	printf("Third event from main proc\n");
+  const char *text = "This is the first event";
+  fprintf(f1, "Writing a filemod %s\n", text);
+  fclose(f1);
+
+	sleep(5);
+	printf("Forking process\n");
 	pid_t fork_pid = fork();
 	if (fork_pid == -1)
 	{
@@ -17,9 +34,12 @@ int main()
 	}
 	if (fork_pid == 0)
 	{
-		int file_desc = open("test_file.txt", O_RDWR);
+		printf("First event from forked proc\n");
+		int file_desc = open("first_event_forked_proc.txt", O_RDWR);
 
 		printf("child: %d\n", fork_pid);
+		sleep(5);
+		printf("First exec from forked proc\n");
 		char *argv[] = { "./execloader", NULL };
 		char *envp[] = { NULL	};
 		execve(argv[0], &argv[0], envp);
