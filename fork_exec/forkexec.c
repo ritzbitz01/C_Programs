@@ -4,9 +4,16 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <inttypes.h>
+#include <math.h>
+#include <time.h>
 
 int main()
 {
+	struct timespec spec;
+	struct timespec spec2;
+	clock_gettime(CLOCK_REALTIME, &spec);
+	printf("Process started at: %ld.%ld\n", spec.tv_sec, spec.tv_nsec);
 	pid_t pid = getpid();
 	printf("PID: %d\n", pid);
 
@@ -24,6 +31,8 @@ int main()
 
 	sleep(5);
 	printf("Forking process\n");
+	clock_gettime(CLOCK_REALTIME, &spec);
+	printf("Process forked at: %ld.%ld\n", spec.tv_sec, spec.tv_nsec);
 	pid_t fork_pid = fork();
 	if (fork_pid == -1)
 	{
@@ -45,7 +54,10 @@ int main()
 
 		printf("child: %d\n", fork_pid);
 		sleep(5);
+
+		printf("WTFWTFWTF\n");
 		printf("First exec from forked proc\n");
+
 		char *argv[] = { "./execloader", NULL };
 		char *envp[] = { NULL	};
 		execve(argv[0], &argv[0], envp);

@@ -4,9 +4,15 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <inttypes.h>
+#include <math.h>
+#include <time.h>
 
 int main()
 {
+  struct timespec spec;
+  clock_gettime(CLOCK_REALTIME, &spec);
+  printf("execloader Process started at: %ld.%ld\n", spec.tv_sec, spec.tv_nsec);
 
   FILE *f1 = fopen("first_exec_event_file.txt", "w");
   if (f1 == NULL)
